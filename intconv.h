@@ -1,8 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <string>
-#include <cstring>  //???
-#include <stdlib.h>
+#include <cstring>
 #include <unistd.h>
 
 #define HEX 16
