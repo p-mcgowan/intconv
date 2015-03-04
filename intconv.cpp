@@ -40,7 +40,7 @@ void formatted_output(char base_in, char base_out, char *input, int args) {
       if (!isValidDecimal(input)) {
         errm("Invalid decimal");
       }
-      num = std::stoi(input);
+      num = atoi(input);
       break;
     case 'c':
       if (!isValidChar(input)) {
