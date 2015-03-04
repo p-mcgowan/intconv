@@ -2,6 +2,7 @@
 #include <cmath>
 #include <string>
 #include <cstring>
+#include <stdlib.h>
 #include <unistd.h>
 
 #define HEX 16
