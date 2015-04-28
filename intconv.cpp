@@ -38,11 +38,14 @@ int main (int argc, char *argv[]) {
   base_out = (argv[2][0] == '-')? argv[2][1] : '?';
   for (int i = (base_out == '?')? 2 : 3; i < argc; i++) {
     if (base_in == 'c') {
+      char space[2] = {' '};
       int j = 0;
       while (argv[i][j] != '\0') {
         formatted_output(base_in, base_out, &argv[i][j]);
         j++;
       }
+      if (i != argc - 1)
+        formatted_output(base_in, base_out, space);
     } else {
       formatted_output(base_in, base_out, argv[i]);
     }
