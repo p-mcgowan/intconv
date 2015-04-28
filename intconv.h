@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <string>
+#include <sstream>
 #include <cstring>
 #include <stdlib.h>
 #include <unistd.h>
@@ -11,14 +12,16 @@
 
 #define BUFFER_SIZE 128
 
-#define logd(msg) std::cout << msg << std::endl;
-#define errm(msg) logd(msg); exit(-1);
+#define logd(msg) std::cout << msg;
+#define logds(msg) std::cout << msg << ' ';
+#define logdn(msg) std::cout << msg << std::endl;
+#define errm(msg) logdn(msg); exit(-1);
 
 // Help message
 void usage();
 
 // Output formatting
-void formatted_output(char base_in, char base_out, char *input, int argc);
+void formatted_output(char base_in, char base_out, char *input);
 void out_all(int num);
 
 // Conversions
@@ -43,8 +46,6 @@ bool isValidDecimal(std::string s) {
 }
 
 bool isValidChar(std::string s) {
-  if (s.size() != 1)
-    return false;
   if ((int)s[0] < 0 || (int)s[0] > 255)
     return false;
   return true;

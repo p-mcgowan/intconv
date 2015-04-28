@@ -1,7 +1,8 @@
 #include "intconv.h"
 
 int main (int argc, char *argv[]) {
-  char base_in, base_out;
+  char base_in, base_out, word[128], buffer[BUFFER_SIZE];
+
   if (!isatty(fileno(stdin))) {
     if (argc != 2 && argc != 3) {
       usage();
@@ -9,25 +10,48 @@ int main (int argc, char *argv[]) {
     }
     base_in = (argv[1][0] == '-')? argv[1][1] : '?';
     base_out = (argc == 3)? (argv[2][0] == '-')? argv[2][1] : '?' : '?';
-    char buffer[BUFFER_SIZE];
 
     while (fgets(buffer, BUFFER_SIZE, stdin)) {
-      buffer[strlen(buffer) - 1] = (buffer[strlen(buffer) - 1] == '\n')? '\0' : buffer[strlen(buffer) - 1];
-      formatted_output(base_in, base_out, buffer, argc + 1);
+      buffer[strlen(buffer) - 1] = 
+        (buffer[strlen(buffer) - 1] == '\n')? '\0' : buffer[strlen(buffer) - 1];
+      std::string line(buffer);
+      std::istringstream parser(line);
+      if (base_in == 'c') {
+        int i = 0;
+        while (line[i] != '\0') {
+          formatted_output(base_in, base_out, &line[i]);
+          i++;
+        }
+      } else {
+        while (parser >> word)
+          formatted_output(base_in, base_out, word);
+      }
     }
+    logdn("");
     return 0;
-  } else if (argc != 3 && argc != 4) {
+  } else if (argc < 3) {
     usage();
     return -1;
   }
-
+  
   base_in = (argv[1][0] == '-')? argv[1][1] : '?';
-  base_out = (argc == 4)? (argv[2][0] == '-')? argv[2][1] : '?' : '?';
-  formatted_output(base_in, base_out, argv[argc - 1], argc);
+  base_out = (argv[2][0] == '-')? argv[2][1] : '?';
+  for (int i = (base_out == '?')? 2 : 3; i < argc; i++) {
+    if (base_in == 'c') {
+      int j = 0;
+      while (argv[i][j] != '\0') {
+        formatted_output(base_in, base_out, &argv[i][j]);
+        j++;
+      }
+    } else {
+      formatted_output(base_in, base_out, argv[i]);
+    }
+  }
+  logdn("");
   return 0;
 }
 
-void formatted_output(char base_in, char base_out, char *input, int args) {
+void formatted_output(char base_in, char base_out, char *input) {
   unsigned num;
   switch (base_in) {
     case 'b':
@@ -62,31 +86,28 @@ void formatted_output(char base_in, char base_out, char *input, int args) {
       break;
     default: errm("Invalid format");
   }
-  if (args == 3) {
-    out_all(num);
-    return;
-  }
   switch (base_out) {
-    case 'b': logd(d2base(num, BIN)); break;
-    case 'd': logd(num); break;
+    case 'b': logds(d2base(num, BIN)); break;
+    case 'd': logds(num); break;
     case 'c': logd((char)num); break;
-    case 'h': logd(d2base(num, HEX)); break;
-    case 'o': logd(d2base(num, OCT)); break;
+    case 'h': logds(d2base(num, HEX)); break;
+    case 'o': logds(d2base(num, OCT)); break;
+    case '?': out_all(num); break;
     default: errm("Invalid format");
   }
 }
 
 void out_all(int num) {
-  logd("Binary  : " << d2base(num, BIN));
-  logd("Octal   : " << d2base(num, OCT));
-  logd("Decimal : " << num);
-  logd("Hex     : " << d2base(num, HEX));
+  logdn("Binary  : " << d2base(num, BIN));
+  logdn("Octal   : " << d2base(num, OCT));
+  logdn("Decimal : " << num);
+  logdn("Hex     : " << d2base(num, HEX));
   logd("ASCII   : " << (char)num);
 }
 
 void usage() {
   std::cout <<
-    "Usage: conv INPUT_BASE [OUTPUT_BASE] INPUT" << std::endl <<
+    "Usage: conv INPUT_BASE [OUTPUT_BASE] INPUT(S)" << std::endl <<
     "Converts INPUT from base INPUT_BASE to other bases." << std::endl <<
     "Base options:" << std::endl <<
     "  -b    binary" << std::endl <<
