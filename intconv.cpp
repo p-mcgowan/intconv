@@ -27,7 +27,8 @@ int main (int argc, char *argv[]) {
           formatted_output(base_in, base_out, word);
       }
     }
-    logdn("");
+    if (base_out != '?')
+      logdn("");
     return 0;
   } else if (argc < 3) {
     usage();
@@ -50,7 +51,8 @@ int main (int argc, char *argv[]) {
       formatted_output(base_in, base_out, argv[i]);
     }
   }
-  logdn("");
+  if (base_out != '?')
+    logdn("");
   return 0;
 }
 
@@ -105,7 +107,7 @@ void out_all(int num) {
   logdn("Octal   : " << d2base(num, OCT));
   logdn("Decimal : " << num);
   logdn("Hex     : " << d2base(num, HEX));
-  logd("ASCII   : " << (char)num);
+  logdn("ASCII   : " << (char)num);
 }
 
 void usage() {
