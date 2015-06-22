@@ -92,7 +92,7 @@ void formatted_output(char base_in, char base_out, char *input) {
     default: errm("Invalid format");
   }
   switch (base_out) {
-    case 'b': logds(d2base(num, BIN)); break;
+    case 'b': printf("%08s ", d2base(num, BIN).c_str()); break;
     case 'd': logds(num); break;
     case 'c': logd((char)num); break;
     case 'h': logds(d2base(num, HEX)); break;
