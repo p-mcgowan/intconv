@@ -12,19 +12,19 @@ int main (int argc, char *argv[]) {
     base_out = (argc == 3)? (argv[2][0] == '-')? argv[2][1] : '?' : '?';
 
     while (fgets(buffer, BUFFER_SIZE, stdin)) {
-      buffer[strlen(buffer) - 1] = 
+      buffer[strlen(buffer) - 1] =
         (buffer[strlen(buffer) - 1] == '\n')? '\0' : buffer[strlen(buffer) - 1];
       std::string line(buffer);
       std::istringstream parser(line);
       if (base_in == 'c') {
         int i = 0;
         while (line[i] != '\0') {
-          formatted_output(base_in, base_out, &line[i]);
+          formatted_output(base_in, base_out, &line[i], argc);
           i++;
         }
       } else {
         while (parser >> word)
-          formatted_output(base_in, base_out, word);
+          formatted_output(base_in, base_out, word, argc);
       }
     }
     if (base_out != '?')
@@ -34,7 +34,7 @@ int main (int argc, char *argv[]) {
     usage();
     return -1;
   }
-  
+
   base_in = (argv[1][0] == '-')? argv[1][1] : '?';
   base_out = (argv[2][0] == '-')? argv[2][1] : '?';
   for (int i = (base_out == '?')? 2 : 3; i < argc; i++) {
@@ -42,13 +42,13 @@ int main (int argc, char *argv[]) {
       char space[2] = {' '};
       int j = 0;
       while (argv[i][j] != '\0') {
-        formatted_output(base_in, base_out, &argv[i][j]);
+        formatted_output(base_in, base_out, &argv[i][j], argc);
         j++;
       }
       if (i != argc - 1)
-        formatted_output(base_in, base_out, space);
+        formatted_output(base_in, base_out, space, argc);
     } else {
-      formatted_output(base_in, base_out, argv[i]);
+      formatted_output(base_in, base_out, argv[i], argc);
     }
   }
   if (base_out != '?')
@@ -56,7 +56,7 @@ int main (int argc, char *argv[]) {
   return 0;
 }
 
-void formatted_output(char base_in, char base_out, char *input) {
+void formatted_output(char base_in, char base_out, char *input, int argc) {
   unsigned num;
   switch (base_in) {
     case 'b':
@@ -92,11 +92,35 @@ void formatted_output(char base_in, char base_out, char *input) {
     default: errm("Invalid format");
   }
   switch (base_out) {
-    case 'b': printf("%08s ", d2base(num, BIN).c_str()); break;
-    case 'd': logds(num); break;
+    case 'b':
+      if (argc == 4) {
+        printf("%08s", d2base(num, BIN).c_str());
+      } else {
+        printf("%08s ", d2base(num, BIN).c_str());
+      }
+      break;
+    case 'd':
+      if (argc == 4) {
+        logd(num);
+      } else {
+        logds(num);
+      }
+      break;
     case 'c': logd((char)num); break;
-    case 'h': logds(d2base(num, HEX)); break;
-    case 'o': logds(d2base(num, OCT)); break;
+    case 'h':
+      if (argc == 4) {
+        logd(d2base(num, HEX));
+      } else {
+        logds(d2base(num, HEX));
+      }
+      break;
+    case 'o':
+      if (argc == 4) {
+        logd(d2base(num, OCT));
+      } else {
+        logds(d2base(num, OCT));
+      }
+      break;
     case '?': out_all(num); break;
     default: errm("Invalid format");
   }

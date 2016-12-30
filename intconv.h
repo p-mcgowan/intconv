@@ -21,7 +21,7 @@
 void usage();
 
 // Output formatting
-void formatted_output(char base_in, char base_out, char *input);
+void formatted_output(char base_in, char base_out, char *input, int argc);
 void out_all(int num);
 
 // Conversions
